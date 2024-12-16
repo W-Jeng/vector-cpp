@@ -21,7 +21,7 @@ public:
     template <typename U>
     constexpr allocator( const allocator<U>& other) noexcept;
 
-    T* allocate(std::size_t n)
+    T* allocate(const std::size_t n)
     {
         if (n == 0)
         {
@@ -38,11 +38,48 @@ public:
         return ptr;
     }
 
+    void deallocate(T* p, const std::size_t n) noexcept
+    {
+        if (p)
+        {
+            ::operator delete(p);
+            std::cout << "Deallocated: " << n * sizeof(T) << " bytes\n";
+        }
+        return;
+    }
+
+    template <typename U, typename... Args>
+    void construct(U* p, Args&&... args)
+    {
+        ::new ((void*)p) U(std::forward<Args>(args)...);
+        std::cout << "Constructed object at " << p << "\n";
+    }
+
+    template <typename U>
+    void destroy(U* p) noexcept
+    {
+        if (p) 
+        {
+            p->~U();
+            std::cout << "Destroyed object at " << p << "\n";
+        }
+    }
 
     std::size_t max_size() noexcept
     {
         return std::numeric_limits<value_type>::max() / sizeof(T);
     }
+
+    constexpr bool operator==(const allocator&) const noexcept
+    {
+        return true;
+    }
+
+    constexpr bool operator!=(const allocator&) const noexcept
+    {
+        return false;
+    }
+
 };
 
 
