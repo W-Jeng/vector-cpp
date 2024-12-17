@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 #include <memory>
 #include <iostream>
@@ -16,10 +18,10 @@ public:
 
     constexpr allocator() noexcept = default;
 
-    allocator( const allocator& other ) noexcept;
+    allocator( const allocator& other ) noexcept = default;
 
     template <typename U>
-    constexpr allocator( const allocator<U>& other) noexcept;
+    constexpr allocator( const allocator<U>& other) noexcept {};
 
     T* allocate(const std::size_t n)
     {
@@ -65,7 +67,12 @@ public:
         }
     }
 
-    std::size_t max_size() noexcept
+    template <typename U>
+    struct rebind {
+        using other = allocator<U>;
+    };
+
+    std::size_t max_size() const noexcept
     {
         return std::numeric_limits<value_type>::max() / sizeof(T);
     }

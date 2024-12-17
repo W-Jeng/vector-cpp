@@ -27,5 +27,7 @@ int main()
 
     alloc.deallocate(b, 5);
 
+    ctm::vector<int> temp;
+
     return EXIT_SUCCESS;
 }
