@@ -68,7 +68,8 @@ public:
     }
 
     template <typename U>
-    struct rebind {
+    struct rebind
+    {
         using other = allocator<U>;
     };
 
