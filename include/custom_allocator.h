@@ -75,7 +75,7 @@ public:
 
     std::size_t max_size() const noexcept
     {
-        return std::numeric_limits<value_type>::max() / sizeof(T);
+        return std::numeric_limits<size_type>::max() / sizeof(T);
     }
 
     constexpr bool operator==(const allocator&) const noexcept

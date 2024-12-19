@@ -16,6 +16,14 @@ private:
     Alloc allocator;
 
 public:
+    using value_type = T;
+    using size_type = std::size_t;
+    using allocator_type = Alloc;
+    using difference_type = std::ptrdiff_t;
+    using reference = T&;
+    using const_reference = T&;
+
+
     vector(): data_(nullptr),
         size_(0),
         capacity_(0) {}
@@ -44,6 +52,21 @@ public:
         return;
     }
 
+    bool empty() const
+    {
+        return (size_ == 0);
+    }
+
+    size_type size() const
+    {
+        return size_;
+    }
+
+    size_type max_size() const
+    {
+        return std::numeric_limits<size_type>::max()/sizeof(T);
+    }
+
     void reserve(std::size_t new_capacity)
     {
         if (new_capacity <= capacity_)
@@ -55,8 +78,8 @@ public:
 
         for (std::size_t i = 0; i < size_; ++i)
         {
-            allocator.construct(new_data+i, std::move(data_[i]));
-            allocator.destroy(data_+i);
+            allocator.construct(new_data + i, std::move(data_[i]));
+            allocator.destroy(data_ + i);
         }
 
         if (data_)
@@ -69,8 +92,24 @@ public:
         return;
     }
 
+    size_type capacity() const
+    {
+        return capacity_;
+    }
+
+    void clear() 
+    {
+        for (std::size_t i = 0; i < size_; ++i) 
+        {
+            allocator.destroy(data_ + i);
+        }
+
+        size_ = 0;
+        // capacity is not released as per the standard's implementation
+    }
+
     // operators
-    const T& at(std::size_t index) const
+    const reference at(std::size_t index) const
     {
         if (index < 0 || index >= size_)
         {
@@ -80,16 +119,45 @@ public:
     }
 
     // accessed when using const vector
-    const T& operator[](std::size_t index) const
+    const_reference operator[](std::size_t index) const
     {
         return data_[index];
     }
 
-    T& operator[](std::size_t index)
+    reference operator[](std::size_t index)
     {
         return data_[index];
     }
 
+    reference front() 
+    {
+        return data_[0];
+    }
+
+    const_reference front() const 
+    {
+        return data_[0];
+    }
+
+    reference back()
+    {
+        return data_[size_ - 1];
+    }
+
+    const_reference back() const
+    {
+        return data_[size_ - 1];
+    }
+
+    T* data() 
+    {
+        return data_;
+    }
+
+    const T* data() const
+    {
+        return data_;
+    }
 
 };
 

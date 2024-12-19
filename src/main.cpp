@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-
+#include <limits>
 
 void test_const(const ctm::vector<int>& vec)
 {
@@ -22,13 +22,6 @@ int main()
 
     test_const(temp);
 
-    temp[1] = 1;
-    std::cout << "temp 1: " << temp[1] << std::endl;
-
-    std::vector<int> std_vec;
-    std_vec.push_back(1);
-    std_vec[100] = 2;
-    std::cout << "std vec: " << std_vec[100] << std::endl;
 
     return EXIT_SUCCESS;
 }
