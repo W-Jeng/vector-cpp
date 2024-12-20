@@ -36,7 +36,6 @@ public:
         }
 
         T* ptr = static_cast<T*>(::operator new(n * sizeof(T)));
-        std::cout << "Allocated: " << n * sizeof(T) << " bytes\n";
         return ptr;
     }
 
@@ -45,7 +44,6 @@ public:
         if (p)
         {
             ::operator delete(p);
-            std::cout << "Deallocated: " << n * sizeof(T) << " bytes\n";
         }
         return;
     }
@@ -54,7 +52,6 @@ public:
     void construct(U* p, Args&&... args)
     {
         ::new ((void*)p) U(std::forward<Args>(args)...);
-        std::cout << "Constructed object at " << p << "\n";
     }
 
     template <typename U>
@@ -63,7 +60,6 @@ public:
         if (p) 
         {
             p->~U();
-            std::cout << "Destroyed object at " << p << "\n";
         }
     }
 

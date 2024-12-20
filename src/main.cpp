@@ -13,14 +13,19 @@ void test_const(const ctm::vector<int>& vec)
 int main()
 {
     std::cout << "hello world!" << std::endl;
-    ctm::vector<int> temp;
-    temp.push_back(1);
-    temp[0] = 2;
-    std::cout << "temp 0: " << temp[0] << std::endl;
+    ctm::vector<int> vec;
+    vec.push_back(1);
+    vec.push_back(2);
+    vec.push_back(3);
+    std::cout << "temp 0: " << vec[0] << std::endl;
 
-    int x = temp[0];
 
-    test_const(temp);
+    test_const(vec);
+
+    for (auto x: vec)
+    {
+        std::cout << "vec val: " << x << std::endl;
+    }
 
 
     return EXIT_SUCCESS;
