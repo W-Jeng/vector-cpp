@@ -194,6 +194,12 @@ public:
 
     iterator insert(const_iterator pos, T&& value)
     {
+        if (pos == end())
+        {
+            push_back(std::move(value));
+            return end()-1;
+        }
+
         const difference_type index = pos - begin();
 
         if (!(0 <= index && index < size()))
@@ -216,6 +222,15 @@ public:
 
     iterator insert(const_iterator pos, size_type count, const T& value)
     {
+        if (pos == end())
+        {
+            for (size_type i = 0; i < count; ++i)
+            {
+                push_back(value);
+            }
+            return end()-count;
+        }
+
         const difference_type index = pos - begin();
 
         if (!(0 <= index && index < size()))
@@ -244,6 +259,18 @@ public:
     iterator insert(const_iterator pos, InputIt first, InputIt last)
     {
         const difference_type count = static_cast<difference_type>(last-first);
+
+        if (pos == end())
+        {
+            while (first != last)
+            {
+                push_back(*first);
+                ++first;
+            }
+
+            return end()-count;
+        }
+
         difference_type index = pos - begin();
         
         if (!(0 <= index && index < size()))
@@ -273,6 +300,37 @@ public:
     iterator insert(const_iterator pos, std::initializer_list<T> ilist)
     {
         return insert(pos, ilist.begin(), ilist.end());
+    }
+
+    template <typename... Args>
+    iterator emplace(const_iterator pos, Args&&... args)
+    {
+        if (pos == end())
+        {
+            push_back(T(std::forward<Args>(std::move(args))...));
+            return end()-1;
+        }
+
+        const difference_type index = pos - begin();
+
+        if (!(0 <= index && index < size()))
+        {
+            throw new std::out_of_range("Emplace position is out of range (more than size.");
+        }
+
+        if (size() + 1 > capacity())
+        {
+            reserve(2 * capacity());
+        }
+
+        iterator it_move_begin = &data_[index];
+        std::move(it_move_begin, end(), it_move_begin + 1);
+
+
+        *it_move_begin = T(std::forward<Args>(std::move(args))...);
+        ++size_;
+
+        return it_move_begin;
     }
 
     void push_back(const T& value)

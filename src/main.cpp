@@ -46,5 +46,10 @@ int main()
     vec.insert(vec.begin()+1, {100, 101, 102});
     print_vector(vec);
     std::cout << "new size: " << vec.size() << ", capacity: " << vec.capacity() << std::endl;
+
+    vec.emplace(vec.end(), 10101);
+    print_vector(vec);
+
+
     return EXIT_SUCCESS;
 }
