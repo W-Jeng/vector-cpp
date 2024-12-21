@@ -2,6 +2,7 @@
 
 #include "custom_allocator.h"
 #include <memory>
+#include <algorithm>
 
 namespace ctm 
 {
@@ -175,7 +176,6 @@ public:
     }
 
     // MODIFIERS
-
     void clear() 
     {
         for (std::size_t i = 0; i < size_; ++i) 
@@ -187,15 +187,93 @@ public:
         // capacity is not released as per the standard's implementation
     }
 
-    // iterator insert(const_iterator pos, const T& value)
-    // {
-    //     return;
-    // }
+    iterator insert(const_iterator pos, const T& value)
+    {
+        return insert(pos, 1, value);
+    }
 
-    // iterator insert(const_iterator pos, size_type count, const T& value)
-    // {
+    iterator insert(const_iterator pos, T&& value)
+    {
+        const difference_type index = pos - begin();
 
-    // }
+        if (!(0 <= index && index < size()))
+        {
+            throw new std::out_of_range("Inserting index is out of range (more than size.");
+        }
+
+        if (size() + 1 > capacity())
+        {
+            reserve(2* capacity());
+        }
+
+        iterator it_move_begin = &data_[index];
+        std::move(it_move_begin, end(), it_move_begin + 1);
+        *it_move_begin = std::move(value);
+        ++size_;
+        return it_move_begin;
+    }
+
+
+    iterator insert(const_iterator pos, size_type count, const T& value)
+    {
+        const difference_type index = pos - begin();
+
+        if (!(0 <= index && index < size()))
+        {
+            throw new std::out_of_range("Inserting index is out of range (more than size.");
+        }
+
+        if (size() + count > capacity())
+        {
+            reserve(next_capacity_power_of_two(size() + count));
+        }
+
+        iterator it_move_begin = &data_[index];
+        std::move(it_move_begin, end(), it_move_begin + count);
+
+        for (size_type i = index; i < index + count; ++i)
+        {
+            data_[i] = value;
+        }
+
+        size_ += count;
+        return it_move_begin;
+    }
+
+    template <typename InputIt>
+    iterator insert(const_iterator pos, InputIt first, InputIt last)
+    {
+        const difference_type count = static_cast<difference_type>(last-first);
+        difference_type index = pos - begin();
+        
+        if (!(0 <= index && index < size()))
+        {
+            throw new std::out_of_range("Inserting index is out of range (more than size.");
+        }
+
+        if (size() + count > capacity())
+        {
+            reserve(next_capacity_power_of_two(size() + count));
+        }
+
+        iterator it_move_begin = &data_[index];
+        std::move(it_move_begin, end(), it_move_begin + count);
+
+        while (first != last)
+        {
+            data_[index] = *first;
+            ++index;
+            ++first;
+        }           
+
+        size_ += count;
+        return it_move_begin;
+    }
+
+    iterator insert(const_iterator pos, std::initializer_list<T> ilist)
+    {
+        return insert(pos, ilist.begin(), ilist.end());
+    }
 
     void push_back(const T& value)
     {
@@ -209,12 +287,30 @@ public:
         return;
     }
 
-
 private:
     T* data_;
     std::size_t size_;  
     std::size_t capacity_;
     Alloc allocator_;
+
+    size_type next_capacity_power_of_two(size_type new_capacity)
+    {
+        const size_type current_capacity = capacity();
+
+        if (new_capacity  <= current_capacity)
+        {
+            return current_capacity;
+        }
+
+        size_type to_change_capacity = 2 * current_capacity;
+
+        while (to_change_capacity < new_capacity)
+        {
+            to_change_capacity *= 2;
+        }
+
+        return to_change_capacity;
+    }
 
 };
 
