@@ -50,6 +50,12 @@ int main()
     vec.emplace(vec.end(), 10101);
     print_vector(vec);
 
+    vec.pop_back();
+    print_vector(vec);
+
+    vec.resize(20);
+    print_vector(vec);
+
 
     return EXIT_SUCCESS;
 }

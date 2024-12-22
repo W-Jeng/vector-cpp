@@ -7,23 +7,25 @@
 namespace ctm 
 {
 
-template <typename T, typename Alloc = ctm::allocator<T>>
+template <typename T, typename Allocator = ctm::allocator<T>>
 class vector 
 {
 public:
     using value_type = T;
     using size_type = std::size_t;
-    using allocator_type = Alloc;
+    using allocator_type = Allocator;
     using difference_type = std::ptrdiff_t;
     using reference = T&;
     using const_reference = T&;
     using iterator = T*;
     using const_iterator = const T*;
 
-    vector():
-        data_(nullptr),
-        size_(0),
-        capacity_(0) {}
+    vector(): vector(Allocator()) {
+        std::cout <<"here" << std::endl;
+    }
+
+    explicit vector(const Allocator& alloc):
+        allocator_(alloc) {}
 
     ~vector()
     {
@@ -35,7 +37,6 @@ public:
         {
             allocator_.deallocate(data_, capacity_);
         }
-        return;
     }
     
     // ELEMENT ACCESS
@@ -167,7 +168,6 @@ public:
 
         data_ = new_data;
         capacity_ = new_capacity;
-        return;
     }
 
     size_type capacity() const
@@ -209,7 +209,7 @@ public:
 
         if (size() + 1 > capacity())
         {
-            reserve(2* capacity());
+            reserve(next_capacity_power_of_two(capacity_+1));
         }
 
         iterator it_move_begin = &data_[index];
@@ -325,11 +325,8 @@ public:
 
         iterator it_move_begin = &data_[index];
         std::move(it_move_begin, end(), it_move_begin + 1);
-
-
         *it_move_begin = T(std::forward<Args>(std::move(args))...);
         ++size_;
-
         return it_move_begin;
     }
 
@@ -337,19 +334,78 @@ public:
     {
         if (size_ == capacity_)
         {
-            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
+            reserve(next_capacity_power_of_two(capacity_+1));
         }
 
         allocator_.construct(data_ + size_, value);
         ++size_;
-        return;
+    }
+
+    void push_back(const T&& value)
+    {
+        if (size_ == capacity_)
+        {
+            reserve(next_capacity_power_of_two(capacity_ + 1));
+        }
+
+        allocator_.construct(data_ + size_, std::move(value));
+        ++size_;
+    }
+
+    void pop_back()
+    {
+        if (size() == 0)
+        {
+            return;
+        }
+
+        allocator_.destroy(end()-1);
+        --size_;
+    }
+
+    void resize(size_type count)
+    {
+        if (count == size())
+        {
+            return;
+        }
+
+        while (count < size())
+        {
+            pop_back();
+        }
+
+        if (count > size())
+        {
+            size_type additional_terms = count - size();
+            insert(end(), additional_terms, T());
+        }
+    }
+
+    void resize(size_type count, const value_type& value)
+    {
+        if (count == size())
+        {
+            return;
+        }
+
+        while (count < size())
+        {
+            pop_back();
+        }
+
+        if (count > size())
+        {
+            size_type additional_terms = count - size();
+            insert(end(), additional_terms, value);
+        }
     }
 
 private:
-    T* data_;
-    std::size_t size_;  
-    std::size_t capacity_;
-    Alloc allocator_;
+    T* data_ = nullptr;
+    std::size_t size_{0};  
+    std::size_t capacity_{0};
+    Allocator allocator_;
 
     size_type next_capacity_power_of_two(size_type new_capacity)
     {
@@ -358,6 +414,11 @@ private:
         if (new_capacity  <= current_capacity)
         {
             return current_capacity;
+        }
+
+        if (current_capacity == 0)
+        {
+            return static_cast<size_type>(1);
         }
 
         size_type to_change_capacity = 2 * current_capacity;
