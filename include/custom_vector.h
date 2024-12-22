@@ -20,12 +20,28 @@ public:
     using iterator = T*;
     using const_iterator = const T*;
 
-    vector(): vector(Allocator()) {
-        std::cout <<"here" << std::endl;
-    }
+    vector():
+        vector(Allocator()) {}
 
     explicit vector(const Allocator& alloc):
+        data_(nullptr),
+        size_(0),
+        capacity_(0),
         allocator_(alloc) {}
+
+    explicit vector(size_type count, const Allocator& alloc = Allocator()):
+        vector(count, T(), Allocator()) {}
+
+    vector(size_type count, const T& value,
+           const Allocator& alloc = Allocator()):
+        data_(nullptr),
+        size_(0),
+        capacity_(0),
+        allocator_(alloc)
+    {
+        reserve(next_capacity_power_of_two(count));
+        insert(begin(), count, value);
+    }
 
     ~vector()
     {
@@ -402,9 +418,9 @@ public:
     }
 
 private:
-    T* data_ = nullptr;
-    std::size_t size_{0};  
-    std::size_t capacity_{0};
+    T* data_;
+    std::size_t size_;  
+    std::size_t capacity_;
     Allocator allocator_;
 
     size_type next_capacity_power_of_two(size_type new_capacity)

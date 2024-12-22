@@ -56,6 +56,9 @@ int main()
     vec.resize(20);
     print_vector(vec);
 
+    ctm::vector<int> vec2(100);
+    print_vector(vec2);
+
 
     return EXIT_SUCCESS;
 }
