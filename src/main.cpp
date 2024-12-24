@@ -59,6 +59,10 @@ int main()
     ctm::vector<int> vec2(100);
     print_vector(vec2);
 
+    ctm::vector<int> vec3(std::move(vec2));
+    std::cout << "completed!" << std::endl;
+    print_vector(vec3);
+
 
     return EXIT_SUCCESS;
 }

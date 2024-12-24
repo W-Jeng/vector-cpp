@@ -43,6 +43,47 @@ public:
         insert(begin(), count, value);
     }
 
+    template <typename InputIt>
+    vector(InputIt first, InputIt last,
+           const Allocator& alloc = Allocator()):
+        data_(nullptr),
+        size_(0),
+        capacity_(0),
+        allocator_(alloc)
+    {
+        while (first != last)
+        {
+            push_back(*first);
+            ++first;
+        }
+    }
+
+    vector(const vector& other)
+    {
+        vector(other.begin(), other.end());
+    }
+
+    vector(vector&& other):
+        data_(nullptr),
+        size_(0),
+        capacity_(0),
+        allocator_(Allocator())
+    {
+        if (other.data() == nullptr)
+        {
+            return;
+        }
+
+        iterator it_begin = other.begin();
+        iterator it_end = other.end();
+
+        while (it_begin != it_end)
+        {
+            push_back(std::move(*it_begin));
+            ++it_begin;
+        }
+    }
+
     ~vector()
     {
         for (size_t i = 0; i < size_; ++i)
