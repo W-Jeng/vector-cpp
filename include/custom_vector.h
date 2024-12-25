@@ -58,18 +58,24 @@ public:
         }
     }
 
-    vector(const vector& other)
-    {
-        vector(other.begin(), other.end());
-    }
+    vector(const vector& other):
+        vector(other.begin(), other.end()) {}
 
     vector(vector&& other):
+        vector(std::move(other), Allocator()) {}
+
+    vector(const vector& other,
+           const Allocator& alloc):
+        vector(other.begin(), other.end(), alloc) {}
+    
+    vector(vector&& other,
+           const Allocator& alloc):
         data_(nullptr),
         size_(0),
         capacity_(0),
-        allocator_(Allocator())
+        allocator_(alloc)
     {
-        if (other.data() == nullptr)
+       if (other.data() == nullptr)
         {
             return;
         }
@@ -84,8 +90,17 @@ public:
         }
     }
 
+    vector(std::initializer_list<T> init,
+           const Allocator& alloc = Allocator()):
+        vector(init.begin(), init.end()) {}
+
     ~vector()
     {
+        if (data_ == nullptr)
+        {
+            return;
+        }
+
         for (size_t i = 0; i < size_; ++i)
         {
             allocator_.destroy(data_ + i);
@@ -94,6 +109,8 @@ public:
         {
             allocator_.deallocate(data_, capacity_);
         }
+        data_ = nullptr;
+
     }
     
     // ELEMENT ACCESS
@@ -489,6 +506,5 @@ private:
     }
 
 };
-
 
 };

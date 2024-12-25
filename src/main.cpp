@@ -12,6 +12,7 @@ void test_const(const ctm::vector<int>& vec)
 
 void print_vector(const ctm::vector<int> & vec)
 {
+
     for (const auto& val: vec) 
     {
         std::cout << val << " ";
@@ -57,12 +58,16 @@ int main()
     print_vector(vec);
 
     ctm::vector<int> vec2(100);
-    print_vector(vec2);
+    // print_vector(vec2);
 
     ctm::vector<int> vec3(std::move(vec2));
-    std::cout << "completed!" << std::endl;
     print_vector(vec3);
 
+    ctm::vector<int> vec4 = {1,2,3,4};
+    print_vector(vec4);
+
+    ctm::vector<int> vec5({1,2,3,4,5});
+    print_vector(vec5);
 
     return EXIT_SUCCESS;
 }
