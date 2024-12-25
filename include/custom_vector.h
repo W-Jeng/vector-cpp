@@ -82,6 +82,7 @@ public:
 
         iterator it_begin = other.begin();
         iterator it_end = other.end();
+        reserve(next_capacity_power_of_two(other.size()));
 
         while (it_begin != it_end)
         {
@@ -90,9 +91,43 @@ public:
         }
     }
 
-    vector(std::initializer_list<T> init,
+    vector(std::initializer_list<value_type> init,
            const Allocator& alloc = Allocator()):
         vector(init.begin(), init.end()) {}
+
+    vector& operator=(const vector& other)
+    {
+        clear();
+        reserve(next_capacity_power_of_two(other.size()));
+        insert(begin(), other.begin(), other.end());
+        capacity_ = other.capacity();
+
+        return *this;
+    }
+
+    vector& operator=(vector&& other)
+    {
+        clear();
+        iterator it_begin = other.begin();
+        iterator it_end = other.end();
+
+        while (it_begin != it_end)
+        {
+            push_back(std::move(*it_begin));
+            ++it_begin;
+        }
+        
+        capacity_ = other.capacity();
+
+        return *this;
+    }
+
+    vector& operator=(std::initializer_list<value_type> init)
+    {
+        clear();
+        reserve(next_capacity_power_of_two(init.size()));
+        insert(begin(), init.begin(), init.end());
+    }
 
     ~vector()
     {
@@ -105,12 +140,13 @@ public:
         {
             allocator_.destroy(data_ + i);
         }
+
         if (data_)
         {
             allocator_.deallocate(data_, capacity_);
         }
-        data_ = nullptr;
 
+        data_ = nullptr;
     }
     
     // ELEMENT ACCESS
@@ -473,6 +509,14 @@ public:
             size_type additional_terms = count - size();
             insert(end(), additional_terms, value);
         }
+    }
+
+    void swap(ctm::vector<T>& other)
+    {
+        std::swap(size_, other.size_);
+        std::swap(capacity_, other.capacity_);
+        std::swap(allocator_, other.allocator_);
+        std::swap(data_, other.data_);
     }
 
 private:
