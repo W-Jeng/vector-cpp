@@ -34,7 +34,7 @@ struct S
     }
 };
 
-TEST(Constructor, default)
+TEST(Constructor, Default)
 {
     ctm::vector<int> vec;
     ctm::vector<double> vec2;
@@ -42,7 +42,7 @@ TEST(Constructor, default)
     ctm::vector<S> vec4; 
 }
 
-TEST(Constructor, count)
+TEST(Constructor, Count)
 {
     int ssize = 5;
     ctm::vector<int> vec(ssize);
@@ -66,7 +66,7 @@ TEST(Constructor, count)
     }
 }
 
-TEST(Constructor, count_default)
+TEST(Constructor, CountAndDefault)
 {
     int ssize = 5;
     int default_value = 2;
@@ -117,5 +117,30 @@ TEST(Constructor, InputIterator)
         EXPECT_EQ(vec2[i].a(), z2_it.a());
         EXPECT_EQ(vec2[i].b(), z2_it.b());
         EXPECT_EQ(vec2[i].c(), z2_it.c());
+    }
+}
+
+TEST(Constructor, PassByReference)
+{
+    ctm::vector<int> vec{{1,2,3}};
+    ctm::vector<int> vec2(vec);
+    EXPECT_EQ(vec.capacity(), vec2.capacity());
+    EXPECT_EQ(vec.size(), vec2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], vec2[i]);
+    }
+
+    ctm::vector<S> vec3{S{1, 2.0, "a"}, S{2, 4.0, "b"}};
+    ctm::vector<S> vec4(vec3);
+    EXPECT_EQ(vec3.capacity(), vec4.capacity());
+    EXPECT_EQ(vec3.size(), vec4.size());
+
+    for (int i = 0; i < vec3.size(); ++i)
+    {
+        EXPECT_EQ(vec3[i].a(), vec4[i].a());
+        EXPECT_EQ(vec3[i].b(), vec4[i].b());
+        EXPECT_EQ(vec3[i].c(), vec4[i].c());
     }
 }
