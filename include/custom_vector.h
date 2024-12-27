@@ -43,8 +43,9 @@ public:
         insert(begin(), count, value);
     }
 
-    template <typename InputIt>
-    vector(InputIt first, InputIt last,
+    template <typename InputIt,
+              typename = std::enable_if_t<!std::is_integral_v<InputIt>>>
+    explicit vector(InputIt first, InputIt last,
            const Allocator& alloc = Allocator()):
         data_(nullptr),
         size_(0),
