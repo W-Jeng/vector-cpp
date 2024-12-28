@@ -430,3 +430,47 @@ TEST(OperatorSquareBracket, Const)
         EXPECT_EQ(vec2[i].c(), std::string(1, 'a'+i));
     }
 }
+
+TEST(Front, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+    EXPECT_EQ(vec.front(), 1);
+
+    vec.front() = 10;
+    EXPECT_EQ(vec.front(), 10);
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    EXPECT_EQ(vec2.front().a(), 1);
+    EXPECT_EQ(vec2.front().b(), 2.0);
+    EXPECT_EQ(vec2.front().c(), "a");
+
+    vec2.front() = S{4,8.0,"d"};
+    EXPECT_EQ(vec2.front().a(), 4);
+    EXPECT_EQ(vec2.front().b(), 8.0);
+    EXPECT_EQ(vec2.front().c(), "d");
+}
+
+TEST(Back, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+    EXPECT_EQ(vec.back(), 5);
+
+    vec.back() = 50;
+    EXPECT_EQ(vec.back(), 50);
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    EXPECT_EQ(vec2.back().a(), 3);
+    EXPECT_EQ(vec2.back().b(), 6.0);
+    EXPECT_EQ(vec2.back().c(), "c");
+
+    vec2.back() = S{4,8.0,"d"};
+    EXPECT_EQ(vec2.back().a(), 4);
+    EXPECT_EQ(vec2.back().b(), 8.0);
+    EXPECT_EQ(vec2.back().c(), "d");
+}
