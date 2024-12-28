@@ -144,3 +144,69 @@ TEST(Constructor, PassByReference)
         EXPECT_EQ(vec3[i].c(), vec4[i].c());
     }
 }
+
+TEST(Constructor, PassByMoveConstructor)
+{
+    ctm::vector<int> vec{{1,2,3}};
+    ctm::vector<int> vec2(std::move(vec));
+    EXPECT_EQ(vec.capacity(), vec2.capacity());
+    EXPECT_EQ(vec.size(), vec2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], i+1);
+    }
+
+    ctm::vector<S> vec3{S{1, 2.0, "a"}, S{2, 4.0, "b"}};
+    ctm::vector<S> vec4(std::move(vec3));
+    EXPECT_EQ(vec3.capacity(), vec4.capacity());
+    EXPECT_EQ(vec3.size(), vec4.size());
+
+    for (int i = 0; i < vec4.size(); ++i)
+    {
+        if (i == 0) 
+        {
+            EXPECT_EQ(vec4[i].a(), 1);
+            EXPECT_EQ(vec4[i].b(), 2.0);
+            EXPECT_EQ(vec4[i].c(), "a");
+        }
+        else
+        {
+            EXPECT_EQ(vec4[i].a(), 2);
+            EXPECT_EQ(vec4[i].b(), 4.0);
+            EXPECT_EQ(vec4[i].c(), "b");
+        }
+    }
+}
+
+TEST(Constructor, PassByInitializerList)
+{
+    std::initializer_list<int> initlist = {1,2,3};
+    ctm::vector<int> vec{initlist};
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec.size(), initlist.size());
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], initlist.begin()[i]);
+    }
+
+    std::initializer_list<S> initlist2 = 
+    {
+        S{1, 2.0 , "a"},
+        S{2, 4.0, "b"},
+        S{3, 6.0, "c"}
+    };
+
+    ctm::vector<S> vec2(initlist2);
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec.size(), initlist2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        auto it = initlist2.begin()[i];
+        EXPECT_EQ(vec2[i].a(), it.a());
+        EXPECT_EQ(vec2[i].b(), it.b());
+        EXPECT_EQ(vec2[i].c(), it.c());
+    }
+}
