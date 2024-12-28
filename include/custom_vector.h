@@ -16,7 +16,7 @@ public:
     using allocator_type = Allocator;
     using difference_type = std::ptrdiff_t;
     using reference = T&;
-    using const_reference = T&;
+    using const_reference = const T&;
     using iterator = T*;
     using const_iterator = const T*;
 

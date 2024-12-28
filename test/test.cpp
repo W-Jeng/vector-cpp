@@ -32,6 +32,21 @@ struct S
     {
         return c_;
     }
+
+    int a() const
+    {
+        return a_;
+    }
+
+    double b() const
+    {
+        return b_;
+    }
+
+    std::string c() const
+    {
+        return c_;
+    }
 };
 
 TEST(Constructor, Default)
@@ -145,7 +160,7 @@ TEST(Constructor, PassByReference)
     }
 }
 
-TEST(Constructor, PassByMoveConstructor)
+TEST(Constructor, MoveConstructor)
 {
     ctm::vector<int> vec{{1,2,3}};
     ctm::vector<int> vec2(std::move(vec));
@@ -179,7 +194,7 @@ TEST(Constructor, PassByMoveConstructor)
     }
 }
 
-TEST(Constructor, PassByInitializerList)
+TEST(Constructor, InitializerList)
 {
     std::initializer_list<int> initlist = {1,2,3};
     ctm::vector<int> vec{initlist};
@@ -208,5 +223,210 @@ TEST(Constructor, PassByInitializerList)
         EXPECT_EQ(vec2[i].a(), it.a());
         EXPECT_EQ(vec2[i].b(), it.b());
         EXPECT_EQ(vec2[i].c(), it.c());
+    }
+}
+
+TEST(Destructor, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+    EXPECT_NO_THROW([&vec](){
+        vec.~vector<int>();
+    }());
+}
+
+TEST(OperatorEqual, PassByReference)
+{
+    ctm::vector<int> vec{{1,2,3}};
+    ctm::vector<int> vec2 = vec;
+    EXPECT_EQ(vec.capacity(), vec2.capacity());
+    EXPECT_EQ(vec.size(), vec2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], vec2[i]);
+    }
+
+    ctm::vector<S> vec3{S{1, 2.0, "a"}, S{2, 4.0, "b"}};
+    ctm::vector<S> vec4 = vec3;
+    EXPECT_EQ(vec3.capacity(), vec4.capacity());
+    EXPECT_EQ(vec3.size(), vec4.size());
+
+    for (int i = 0; i < vec3.size(); ++i)
+    {
+        EXPECT_EQ(vec3[i].a(), vec4[i].a());
+        EXPECT_EQ(vec3[i].b(), vec4[i].b());
+        EXPECT_EQ(vec3[i].c(), vec4[i].c());
+    }
+}
+
+TEST(OperatorEqual, MoveConstructor)
+{
+    ctm::vector<int> vec{{1,2,3}};
+    ctm::vector<int> vec2 = std::move(vec);
+    EXPECT_EQ(vec.capacity(), vec2.capacity());
+    EXPECT_EQ(vec.size(), vec2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], i+1);
+    }
+
+    ctm::vector<S> vec3{S{1, 2.0, "a"}, S{2, 4.0, "b"}};
+    ctm::vector<S> vec4 = std::move(vec3);
+    EXPECT_EQ(vec3.capacity(), vec4.capacity());
+    EXPECT_EQ(vec3.size(), vec4.size());
+
+    for (int i = 0; i < vec4.size(); ++i)
+    {
+        if (i == 0) 
+        {
+            EXPECT_EQ(vec4[i].a(), 1);
+            EXPECT_EQ(vec4[i].b(), 2.0);
+            EXPECT_EQ(vec4[i].c(), "a");
+        }
+        else
+        {
+            EXPECT_EQ(vec4[i].a(), 2);
+            EXPECT_EQ(vec4[i].b(), 4.0);
+            EXPECT_EQ(vec4[i].c(), "b");
+        }
+    }
+}
+
+TEST(OperatorEqual, InitializerList)
+{
+    std::initializer_list<int> initlist = {1,2,3};
+    ctm::vector<int> vec = initlist;
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec.size(), initlist.size());
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], initlist.begin()[i]);
+    }
+
+    std::initializer_list<S> initlist2 = 
+    {
+        S{1, 2.0 , "a"},
+        S{2, 4.0, "b"},
+        S{3, 6.0, "c"}
+    };
+
+    ctm::vector<S> vec2 = initlist2;
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec.size(), initlist2.size());
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        auto it = initlist2.begin()[i];
+        EXPECT_EQ(vec2[i].a(), it.a());
+        EXPECT_EQ(vec2[i].b(), it.b());
+        EXPECT_EQ(vec2[i].c(), it.c());
+    }
+}
+
+TEST(At, Default)
+{
+    ctm::vector<int> vec{5};
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        vec.at(i) = i+1;
+    }
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec.at(i), i+1);
+    }
+
+
+    EXPECT_THROW([&vec](){
+        int temp = vec.at(5);
+    }(), std::out_of_range);
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec2.at(i).a(), i+1);
+        EXPECT_EQ(vec2.at(i).b(), 2.0*(i+1));
+        EXPECT_EQ(vec2.at(i).c(), std::string(1, 'a'+i));
+    }
+
+    EXPECT_THROW([&vec2](){
+        S temp = vec2.at(5);
+    }(), std::out_of_range);
+}
+
+TEST(At, Const)
+{
+    const ctm::vector<int> vec{{1,2,3,4,5}};
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec.at(i), i+1);
+    }
+
+    EXPECT_THROW([&vec](){
+        int temp = vec.at(5);
+    }(), std::out_of_range);
+
+    const ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec2.at(i).a(), i+1);
+        EXPECT_EQ(vec2.at(i).b(), 2.0*(i+1));
+        EXPECT_EQ(vec2.at(i).c(), std::string(1, 'a'+i));
+    }
+
+    EXPECT_THROW([&vec2](){
+        S temp = vec2.at(5);
+    }(), std::out_of_range);
+}
+
+TEST(OperatorSquareBracket, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], i+1);
+    }
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec2[i].a(), i+1);
+        EXPECT_EQ(vec2[i].b(), 2.0*(i+1));
+        EXPECT_EQ(vec2[i].c(), std::string(1, 'a'+i));
+    }
+}
+
+TEST(OperatorSquareBracket, Const)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+
+    for (int i = 0; i < vec.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], i+1);
+    }
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+
+    for (int i = 0; i < vec2.size(); ++i)
+    {
+        EXPECT_EQ(vec2[i].a(), i+1);
+        EXPECT_EQ(vec2[i].b(), 2.0*(i+1));
+        EXPECT_EQ(vec2[i].c(), std::string(1, 'a'+i));
     }
 }
