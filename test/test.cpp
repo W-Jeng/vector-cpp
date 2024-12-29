@@ -474,3 +474,127 @@ TEST(Back, Default)
     EXPECT_EQ(vec2.back().b(), 8.0);
     EXPECT_EQ(vec2.back().c(), "d");
 }
+
+TEST(Data, Default)
+{
+    ctm::vector<int> vec({1,2,3,4,5});
+    EXPECT_EQ(vec.data(), vec.begin());
+}
+
+TEST(Iterators, Default)
+{
+    ctm::vector<int> vec({1,2,3,4,5});
+
+    auto it = vec.begin();
+    auto it_end = vec.end();
+    EXPECT_EQ(*(it_end-1), 5);
+    int i = 0;
+
+    while (it != it_end)
+    {
+        EXPECT_EQ(*it, vec[i]);
+        ++it;
+        ++i;
+    }
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+    
+    auto it2 = vec2.begin();
+    auto it2_end = vec2.end();
+    EXPECT_EQ((it2_end-1)->a(), 3);
+    EXPECT_EQ((it2_end-1)->b(), 6.0);
+    EXPECT_EQ((it2_end-1)->c(), "c");
+
+    for (std::size_t i2=0; i2<vec2.size(); ++i2)
+    {
+        EXPECT_EQ(it2 -> a(), vec2[i2].a());
+        EXPECT_EQ(it2 -> b(), vec2[i2].b());
+        EXPECT_EQ(it2 -> c(), vec2[i2].c());
+        ++it2;
+    }
+}
+
+// Capacity
+TEST(Empty, Default)
+{
+    ctm::vector<int> vec({1,2,3,4,5});
+    EXPECT_FALSE(vec.empty());
+    
+    ctm::vector<int> vec2{};
+    EXPECT_TRUE(vec2.empty());
+
+    ctm::vector<int> vec3 = {};
+    EXPECT_TRUE(vec3.empty());
+
+    ctm::vector<int> vec4 = {1};
+    EXPECT_FALSE(vec4.empty());
+}
+
+TEST(Size, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+    EXPECT_EQ(vec.size(), 5);
+
+    vec.push_back(6);
+    EXPECT_EQ(vec.size(), 6);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        vec.push_back(i);
+        EXPECT_EQ(vec.size(), i+7);
+    }
+
+    int size = vec.size();
+
+    for (int i = 0; i < 10; ++i)
+    {
+        vec.pop_back();
+        EXPECT_EQ(vec.size(), size-(i+1));
+    }
+}
+
+// max size not tested as it is a constant to type T
+
+TEST(ReserveAndCapacity, Default)
+{   
+    ctm::vector<int> vec{};
+    EXPECT_EQ(vec.capacity(), 0);
+
+    vec.push_back(1);
+    EXPECT_EQ(vec.capacity(), 1);
+
+    vec.push_back(2);
+    vec.push_back(3);
+    EXPECT_EQ(vec.capacity(), 4);
+    vec.push_back(4);
+    EXPECT_EQ(vec.capacity(), 4);
+
+    vec.reserve(10);
+    EXPECT_EQ(vec.capacity(), 10);
+
+    for (int i = 0; i < 6; ++i)
+    {
+        vec.push_back(i);
+        EXPECT_EQ(vec.capacity(), 10);
+    }
+
+    vec.push_back(11);
+    EXPECT_EQ(vec.capacity(), 20);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
