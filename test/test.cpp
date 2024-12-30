@@ -584,6 +584,120 @@ TEST(ReserveAndCapacity, Default)
     EXPECT_EQ(vec.capacity(), 20);
 }
 
+// Modifiers
+
+TEST(Clear, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4,5}};
+    EXPECT_EQ(vec.capacity(), 8);
+    EXPECT_EQ(vec.size(), 5);
+    vec.clear();
+    EXPECT_EQ(vec.capacity(), 8);
+    EXPECT_EQ(vec.size(), 0);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        vec.push_back(i);
+    }
+
+    EXPECT_EQ(vec.capacity(), 128);
+    EXPECT_EQ(vec.size(), 100);
+    vec.clear();
+    EXPECT_EQ(vec.capacity(), 128);
+    EXPECT_EQ(vec.size(), 0);
+
+    ctm::vector<S> vec2{S{1,2.0,"a"},
+        S{2,4.0,"b"},
+        S{3,6.0,"c"}};
+    EXPECT_EQ(vec2.capacity(), 4);
+    EXPECT_EQ(vec2.size(), 3);
+    vec2.clear();
+    EXPECT_EQ(vec2.capacity(), 4);
+    EXPECT_EQ(vec2.size(), 0);
+}
+
+TEST(Insert, PassByReference)
+{
+    ctm::vector<int> vec{{1,2}};
+    int a = 5;
+    vec.insert(vec.begin(), a);
+    EXPECT_EQ(vec.size(), 3);
+    EXPECT_EQ(vec.capacity(), 4);
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 1);
+    EXPECT_EQ(vec[2], 2);
+
+    int b = 10;
+    vec.insert(vec.end(), b);
+    EXPECT_EQ(vec.size(), 4);
+    EXPECT_EQ(vec.capacity(), 4);
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 1);
+    EXPECT_EQ(vec[2], 2);
+    EXPECT_EQ(vec[3], 10);
+}
+
+TEST(Insert, PassByMove)
+{
+    ctm::vector<int> vec{{1,2}};
+    vec.insert(vec.begin(), 5);
+    EXPECT_EQ(vec.size(), 3);
+    EXPECT_EQ(vec.capacity(), 4);
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 1);
+    EXPECT_EQ(vec[2], 2);
+
+    vec.insert(vec.end(), 10);
+    EXPECT_EQ(vec.size(), 4);
+    EXPECT_EQ(vec.capacity(), 4);
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 1);
+    EXPECT_EQ(vec[2], 2);
+    EXPECT_EQ(vec[3], 10);
+}
+
+
+TEST(Insert, InputIt)
+{
+    ctm::vector<int> vec;
+    std::initializer_list init = {1,2,3,4};
+    vec.insert(vec.begin(), init.begin(), init.end());
+
+    for (int i = 0; i < init.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], init.begin()[i]); 
+    }
+    EXPECT_EQ(vec.size(), init.size());
+    EXPECT_EQ(vec.capacity(), 4);
+
+    std::initializer_list init2 = {5,6,7};
+    vec.insert(vec.begin()+1, init2.begin(), init2.end()-1);
+
+    EXPECT_EQ(vec.size(), 6);
+    EXPECT_EQ(vec.capacity(), 8);
+
+    EXPECT_EQ(vec[0], 1);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 6);
+    EXPECT_EQ(vec[3], 2);
+    EXPECT_EQ(vec[4], 3);
+    EXPECT_EQ(vec[5], 4);
+
+    vec.insert(vec.end(), init2.begin()+1, init2.end());
+    EXPECT_EQ(vec[0], 1);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 6);
+    EXPECT_EQ(vec[3], 2);
+    EXPECT_EQ(vec[4], 3);
+    EXPECT_EQ(vec[5], 4);
+    EXPECT_EQ(vec[6], 6);
+    EXPECT_EQ(vec[7], 7);
+}
+
 
 
 

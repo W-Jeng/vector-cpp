@@ -366,7 +366,8 @@ public:
         return it_move_begin;
     }
 
-    template <typename InputIt>
+    template <typename InputIt,
+              typename = std::enable_if_t<!std::is_integral_v<InputIt>>>
     iterator insert(const_iterator pos, InputIt first, InputIt last)
     {
         const difference_type count = static_cast<difference_type>(last-first);
