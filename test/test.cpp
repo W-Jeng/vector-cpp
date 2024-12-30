@@ -660,6 +660,30 @@ TEST(Insert, PassByMove)
     EXPECT_EQ(vec[3], 10);
 }
 
+TEST(Insert, CountAndValue)
+{
+    ctm::vector<int> vec{{1,2}};
+    vec.insert(vec.begin(), 2, 5);
+    EXPECT_EQ(vec.size(), 4);
+    EXPECT_EQ(vec.capacity(), 4);
+
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 1);
+    EXPECT_EQ(vec[3], 2);
+
+    vec.insert(vec.end(), 2, 10);
+    EXPECT_EQ(vec.size(), 6);
+    EXPECT_EQ(vec.capacity(), 8);
+
+    EXPECT_EQ(vec[0], 5);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 1);
+    EXPECT_EQ(vec[3], 2);
+    EXPECT_EQ(vec[4], 10);
+    EXPECT_EQ(vec[5], 10);
+}
 
 TEST(Insert, InputIt)
 {
