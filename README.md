@@ -118,12 +118,12 @@ int main()
 }
 ```
 
-### Build and Run Instructions
-## Prerequisites
+## Build and Run Instructions
+### Prerequisites
 - CMake: Version 3.20 and above.
 - GoogleTest: Installed as a submodule.
 
-## Build the Project
+### Build the Project
 1. Clone the repo:
 ```bash
 git clone https://github.com/W-Jeng/vector-cpp.git
@@ -143,16 +143,16 @@ cmake ..
 cmake --build .
 ```
 
-## Run Tests
+### Run Tests
 ```bash
 ./bin/runtest
 ```
 
-## Run main
+### Run main
 ```bash
 ./bin/main
 ```
 
-### Lessons Learnt
+## Lessons Learnt
 
 Through this project, I gained a deeper understanding of memory allocation, the internal workings of allocators and dynamic arrays, and significantly improved my knowledge of templates and modern C++. I also enhanced my skills in implementing efficient data structures and optimising resource management. Writing comprehensive tests using GoogleTest not only improved my testing abilities but also helped me identify and fix unseen bugs, reinforcing the importance of rigorous validation and edge case handling in software development. Additionally, I developed a better appreciation for modular design, reusable code, and the significance of adhering to best practices in creating performant and maintainable libraries.
