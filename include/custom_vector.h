@@ -442,6 +442,66 @@ public:
         return it_move_begin;
     }
 
+    iterator erase(const_iterator pos)
+    {
+        const difference_type index = pos-begin();
+
+        if (index == size()-1)
+        {
+            --size_;
+            allocator_.destroy(&data_[index]);
+            return end();
+        }
+
+        allocator_.destroy(&data_[index]);
+        iterator it_move_begin = &data_[index+1];
+        std::move(it_move_begin, end(), &data_[index]);
+        allocator_.destroy(&data_[size()-1]);
+        --size_;
+        return it_move_begin;
+    }
+    
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        const difference_type len_to_first = first-begin();
+        iterator it = begin() + len_to_first;
+
+        if (last == end())
+        {
+            while (it != last)
+            {
+                --size_;
+                allocator_.destroy(it);
+                ++it;
+            }
+            return end();
+        }
+
+        iterator it_end = end();
+
+        while (it != last)
+        {
+            allocator_.destroy(it);
+            ++it;
+            --size_;
+        }
+
+        std::move(it, it_end, begin()+len_to_first);
+
+        const difference_type size_to_end = last-begin();
+        iterator it_to_destroy = begin() + size_to_end;
+
+        while (it_to_destroy != it_end)
+        {
+            allocator_.destroy(it_to_destroy);
+            ++it_to_destroy;
+        }
+
+        return it;
+    }
+
+
+
     void push_back(const T& value)
     {
         if (size_ == capacity_)

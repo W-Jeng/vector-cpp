@@ -789,6 +789,29 @@ TEST(Emplace, Default)
     EXPECT_EQ(vec2[2].c(), "c");
 }
 
+TEST(Erase, Default)
+{
+    ctm::vector<int> vec{{1,2,3,4}};
+
+    vec.erase(vec.begin());
+    EXPECT_EQ(vec.size(), 3);
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec[0], 2);
+    EXPECT_EQ(vec[1], 3);
+    EXPECT_EQ(vec[2], 4);
+}
+
+TEST(Erase, Iterator)
+{
+    ctm::vector<int> vec{{1,2,3,4,5,6}};
+    vec.erase(vec.begin()+1, vec.begin()+3);
+    EXPECT_EQ(vec.size(),4);
+    EXPECT_EQ(vec.capacity(), 8);
+    EXPECT_EQ(vec[0], 1);
+    EXPECT_EQ(vec[1], 4);
+    EXPECT_EQ(vec[2], 5);
+    EXPECT_EQ(vec[3], 6);
+}
 
 
 
