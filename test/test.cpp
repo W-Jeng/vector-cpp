@@ -722,7 +722,72 @@ TEST(Insert, InputIt)
     EXPECT_EQ(vec[7], 7);
 }
 
+TEST(Insert, InitializerList)
+{
+    ctm::vector<int> vec;
+    std::initializer_list init = {1,2,3,4};
+    vec.insert(vec.begin(), init);
 
+    for (int i = 0; i < init.size(); ++i)
+    {
+        EXPECT_EQ(vec[i], init.begin()[i]); 
+    }
+    EXPECT_EQ(vec.size(), init.size());
+    EXPECT_EQ(vec.capacity(), 4);
+
+    std::initializer_list init2 = {5,6};
+    vec.insert(vec.begin()+1, init2);
+
+    EXPECT_EQ(vec.size(), 6);
+    EXPECT_EQ(vec.capacity(), 8);
+
+    EXPECT_EQ(vec[0], 1);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 6);
+    EXPECT_EQ(vec[3], 2);
+    EXPECT_EQ(vec[4], 3);
+    EXPECT_EQ(vec[5], 4);
+
+    vec.insert(vec.end(), {6,7});
+    EXPECT_EQ(vec[0], 1);
+    EXPECT_EQ(vec[1], 5);
+    EXPECT_EQ(vec[2], 6);
+    EXPECT_EQ(vec[3], 2);
+    EXPECT_EQ(vec[4], 3);
+    EXPECT_EQ(vec[5], 4);
+    EXPECT_EQ(vec[6], 6);
+    EXPECT_EQ(vec[7], 7);
+}
+
+TEST(Emplace, Default)
+{
+    ctm::vector<S> vec;
+    vec.emplace(vec.begin(), 2, 4.0, "b");
+    vec.emplace(vec.begin(), 1, 2.0, "a");
+    EXPECT_EQ(vec.size(), 2);
+    EXPECT_EQ(vec.capacity(), 2);
+    EXPECT_EQ(vec[0].a(), 1);
+    EXPECT_EQ(vec[0].b(), 2.0);
+    EXPECT_EQ(vec[0].c(), "a");
+    EXPECT_EQ(vec[1].a(), 2);
+    EXPECT_EQ(vec[1].b(), 4.0);
+    EXPECT_EQ(vec[1].c(), "b");
+
+    ctm::vector<S> vec2{{1, 2.0, "a"}};
+    vec2.emplace(vec2.end(), 2, 4.0, "b");
+    vec2.emplace(vec2.end(), 3, 6.0, "c");
+    EXPECT_EQ(vec2.size(), 3);
+    EXPECT_EQ(vec2.capacity(), 4);
+    EXPECT_EQ(vec2[0].a(), 1);
+    EXPECT_EQ(vec2[0].b(), 2.0);
+    EXPECT_EQ(vec2[0].c(), "a");
+    EXPECT_EQ(vec2[1].a(), 2);
+    EXPECT_EQ(vec2[1].b(), 4.0);
+    EXPECT_EQ(vec2[1].c(), "b");
+    EXPECT_EQ(vec2[2].a(), 3);
+    EXPECT_EQ(vec2[2].b(), 6.0);
+    EXPECT_EQ(vec2[2].c(), "c");
+}
 
 
 

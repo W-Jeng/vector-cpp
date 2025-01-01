@@ -419,7 +419,7 @@ public:
     {
         if (pos == end())
         {
-            push_back(T(std::forward<Args>(std::move(args))...));
+            push_back(T(std::forward<Args>(args)...));
             return end()-1;
         }
 
@@ -437,7 +437,7 @@ public:
 
         iterator it_move_begin = &data_[index];
         std::move(it_move_begin, end(), it_move_begin + 1);
-        *it_move_begin = T(std::forward<Args>(std::move(args))...);
+        *it_move_begin = T(std::forward<Args>(args)...);
         ++size_;
         return it_move_begin;
     }
