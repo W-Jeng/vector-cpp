@@ -1,4 +1,4 @@
-# Custom Allocator and Vector Implementation
+# Standard Vector and Allocator Implementation
 
 ## Overview
 
