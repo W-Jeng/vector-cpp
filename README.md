@@ -67,7 +67,8 @@ The tests cover:
 #include <gtest/gtest.h>
 #include "custom_vector.h"
 
-TEST(VectorTest, PushBackIncreasesSize) {
+TEST(VectorTest, PushBackIncreasesSize) 
+{
     ctm::vector<int> vec;
     vec.push_back(1);
     vec.push_back(2);
@@ -82,7 +83,8 @@ TEST(VectorTest, PushBackIncreasesSize) {
 ```cpp
 #include "custom_allocator.h"
 
-int main() {
+int main() 
+{
     ctm::allocator<int> alloc;
     int* ptr = alloc.allocate(5);
     alloc.construct(ptr, 42);
@@ -100,7 +102,8 @@ int main() {
 ```cpp
 #include "custom_vector.h"
 
-int main() {
+int main() 
+{
     ctm::vector<int> vec;
 
     vec.push_back(1);
