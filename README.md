@@ -37,7 +37,7 @@ To ensure reliability and correctness, the implementation is rigorously tested w
 ## Testing
 
 ### Framework
-- **GoogleTest**: All tests are written using the GoogleTest framework to ensure correctness and robustness.
+- **GoogleTest**: All tests are written using the GoogleTest framework to ensure correctness and robustness. A total of 38 tests from 21 test suites have been written to ensure correctness.
 - **CMake**: The project is configured to use CMake for building and running tests.
 
 ### Coverage
