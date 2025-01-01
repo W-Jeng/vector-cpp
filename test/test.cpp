@@ -858,11 +858,212 @@ TEST(PushBack, Default)
     }
 }
 
+TEST(PushBack, MoveOperator)
+{
+    ctm::vector<int> vec;
 
+    for (int i = 0; i < 50; ++i)
+    {
+        int a = i;
+        vec.push_back(std::move(a));
+        EXPECT_EQ(vec.size(), i+1);
+        
+        if  (vec.size() == 1)
+        {
+            EXPECT_EQ(vec.capacity(), 1);
+        }
+        else if (vec.size() <= 2)
+        {
+            EXPECT_EQ(vec.capacity(), 2);
+        }
+        else if (vec.size() <= 4)
+        {
+            EXPECT_EQ(vec.capacity(), 4);
+        }
+        else if (vec.size() <= 8)
+        {
+            EXPECT_EQ(vec.capacity(), 8);
+        }
+        else if (vec.size() <= 16)
+        {
+            EXPECT_EQ(vec.capacity(), 16);
+        }
+        else if (vec.size() <= 32)
+        {
+            EXPECT_EQ(vec.capacity(), 32);
+        }
+        else
+        {
+            EXPECT_EQ(vec.capacity(), 64);
+        }
+    }
 
+    for (int i = 0; i < 50; ++i)
+    {
+        EXPECT_EQ(vec[i], i);
+    }
+}
 
+TEST(EmplaceBack, Default)
+{
+    ctm::vector<S> vec{{1, 2.0, "a"}, {2, 4.0, "b"}};
 
+    S& added_s = vec.emplace_back(3, 6.0, "c");
+    EXPECT_EQ(vec.capacity(), 4);
+    EXPECT_EQ(vec.size(), 3);
 
+    EXPECT_EQ(vec[0].a(), 1);
+    EXPECT_EQ(vec[0].b(), 2.0);
+    EXPECT_EQ(vec[0].c(), "a");
+    EXPECT_EQ(vec[1].a(), 2);
+    EXPECT_EQ(vec[1].b(), 4.0);
+    EXPECT_EQ(vec[1].c(), "b");
+    EXPECT_EQ(vec[2].a(), 3);
+    EXPECT_EQ(vec[2].b(), 6.0);
+    EXPECT_EQ(vec[2].c(), "c");
+
+    EXPECT_EQ(added_s.a(), 3);
+    EXPECT_EQ(added_s.b(), 6.0);
+    EXPECT_EQ(added_s.c(), "c");
+
+    added_s.a_ = 5;
+    EXPECT_EQ(vec[2].a(), 5);
+}
+
+TEST(PopBack, Default)
+{
+    ctm::vector<int> vec;
+
+    for (int i = 0; i < 50; ++i)
+    {
+        vec.push_back(i);
+    }
+
+    for (int i = 0; i < 50; ++i)
+    {
+        vec.pop_back();
+        EXPECT_EQ(vec.size(), 50-i-1);
+        EXPECT_EQ(vec.capacity(), 64);
+    }
+}
+
+TEST(Resize, Default)
+{
+    //test reduce and increase size;
+    ctm::vector<int> vec;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        vec.push_back(i);
+    }
+
+    vec.resize(20);
+    EXPECT_EQ(vec.size(), 20);
+    EXPECT_EQ(vec.capacity(), 32);
+
+    for (int i = 0; i < 20; ++i)
+    {
+        if (i < 10)
+        {
+            EXPECT_EQ(vec[i], i);
+        }
+        else
+        {
+            EXPECT_EQ(vec[i], 0);
+        }
+    }
+
+    ctm::vector<int> vec2;
+
+    for (int i = 0; i < 20; ++i)
+    {
+        vec2.push_back(i);
+    }
+
+    vec2.resize(10);
+    EXPECT_EQ(vec2.size(), 10);
+    EXPECT_EQ(vec2.capacity(), 32);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_EQ(vec[i], i);
+    }
+}
+
+TEST(Resize, CountWithDefault)
+{
+    //test reduce and increase size;
+    ctm::vector<int> vec;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        vec.push_back(i);
+    }
+
+    vec.resize(20, 5);
+    EXPECT_EQ(vec.size(), 20);
+    EXPECT_EQ(vec.capacity(), 32);
+
+    for (int i = 0; i < 20; ++i)
+    {
+        if (i < 10)
+        {
+            EXPECT_EQ(vec[i], i);
+        }
+        else
+        {
+            EXPECT_EQ(vec[i], 5);
+        }
+    }
+
+    ctm::vector<int> vec2;
+
+    for (int i = 0; i < 20; ++i)
+    {
+        vec2.push_back(i);
+    }
+
+    vec2.resize(10, 5);
+    EXPECT_EQ(vec2.size(), 10);
+    EXPECT_EQ(vec2.capacity(), 32);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_EQ(vec[i], i);
+    }
+}
+
+TEST(Swap, Default)
+{
+    ctm::vector<int> vec, vec2;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        vec.push_back(i);
+    }
+
+    for (int i = 0; i < 100; ++i)
+    {
+        vec2.push_back(i+100);
+    }
+
+    vec.swap(vec2);
+    
+    EXPECT_EQ(vec.size(), 100);
+    EXPECT_EQ(vec.capacity(), 128);
+    EXPECT_EQ(vec2.size(), 10);
+    EXPECT_EQ(vec2.capacity(), 16);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        EXPECT_EQ(vec[i], i+100);
+    }
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_EQ(vec2[i], i);
+    }
+}
 
 
 

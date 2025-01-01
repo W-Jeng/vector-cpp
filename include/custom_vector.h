@@ -500,8 +500,6 @@ public:
         return it;
     }
 
-
-
     void push_back(const T& value)
     {
         if (size_ == capacity_)
@@ -522,6 +520,13 @@ public:
 
         allocator_.construct(data_ + size_, std::move(value));
         ++size_;
+    }
+
+    template<typename... Args>
+    reference emplace_back(Args&&... args)
+    {
+        push_back(std::move(T(std::forward<Args>(args)...)));
+        return data_[size()-1];
     }
 
     void pop_back()
