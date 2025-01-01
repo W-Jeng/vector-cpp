@@ -78,8 +78,8 @@ TEST(VectorTest, PushBackIncreasesSize)
 }
 ```
 
-### Example Usage
-## Using the Custom Allocator
+## Example Usage
+### Using the Custom Allocator
 ```cpp
 #include "custom_allocator.h"
 
@@ -98,7 +98,7 @@ int main()
 }
 ```
 
-## Using the Custom Vector
+### Using the Custom Vector
 ```cpp
 #include "custom_vector.h"
 
