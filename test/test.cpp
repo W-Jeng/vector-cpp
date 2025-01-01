@@ -813,7 +813,50 @@ TEST(Erase, Iterator)
     EXPECT_EQ(vec[3], 6);
 }
 
+TEST(PushBack, Default)
+{
+    ctm::vector<int> vec;
 
+    for (int i = 0; i < 50; ++i)
+    {
+        vec.push_back(i);
+        EXPECT_EQ(vec.size(), i+1);
+        
+        if  (vec.size() == 1)
+        {
+            EXPECT_EQ(vec.capacity(), 1);
+        }
+        else if (vec.size() <= 2)
+        {
+            EXPECT_EQ(vec.capacity(), 2);
+        }
+        else if (vec.size() <= 4)
+        {
+            EXPECT_EQ(vec.capacity(), 4);
+        }
+        else if (vec.size() <= 8)
+        {
+            EXPECT_EQ(vec.capacity(), 8);
+        }
+        else if (vec.size() <= 16)
+        {
+            EXPECT_EQ(vec.capacity(), 16);
+        }
+        else if (vec.size() <= 32)
+        {
+            EXPECT_EQ(vec.capacity(), 32);
+        }
+        else
+        {
+            EXPECT_EQ(vec.capacity(), 64);
+        }
+    }
+
+    for (int i = 0; i < 50; ++i)
+    {
+        EXPECT_EQ(vec[i], i);
+    }
+}
 
 
 
