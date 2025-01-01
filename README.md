@@ -125,6 +125,7 @@ int main() {
 ```bash
 git clone https://github.com/W-Jeng/vector-cpp.git
 cd vector-cpp
+git submodule update --init --recursive
 ```
 
 2. Create a build directory and configure the project
